@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     boolean gameActive;
     TextView introTextView;
 
+    // this method is in charge of replaying the game. once the countdown timer finishes, the play again button appears, the media player will sound,
+    // gameActive is set to false.
     public void playAgain(View view) {
         score = 0;
         numberOfQuestions = 0;
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         resultTextView.setText("");
         gameActive = true;
 
+        //the code below - I am using a timer to count down from 30 seconds - in milliseconds below.
+        //onTick is the actual text view of the counter counting down. onFinish I have a media player that will play
+        //an airhorn when the timer is finished.
         new CountDownTimer(30150, 1000) {
             @Override
             public void onTick(long l) {
@@ -64,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
+    //here we need to figure out what button the user pressed. we create a method to determine this. We put tags on our button to allow us to locate the button pressed.
+    //set the buttons onClick to this chooseAnswer method. if the button id selected is the same as our locationOfCorrectAnswer, set text for result to "Correct", increment score,
+    //go to next question.
     public void chooseAnswer(View view) {
         if (gameActive) {
             if (Integer.toString(locationOfCorrectAnswer).equals(view.getTag().toString())) {
@@ -78,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //this method is activated when the GO! button is pressed. the button becomes invisible, and the gameLayout is shown.
     public void start(View view) {
         goButton.setVisibility(View.INVISIBLE);
         introTextView.setVisibility(View.INVISIBLE);
@@ -86,7 +95,10 @@ public class MainActivity extends AppCompatActivity {
         gameActive = true;
     }
 
+    //We are asking our new question here. when this method runs, we are using Rand to come up with random numbers to ask. for our questions, we want to limit the possibilities
+    //to numbers between 1 and 20 - just to keep the questions from being too hard. We also use Rand below to randomly pick the other numbers to populate our answer buttons.
     public void newQuestion() {
+        //Rand - this his how we get a random number. below, for a & b we use rand.nextInt() and inside we put the bound - the highest int not including the number
         Random rand = new Random();
 
         int a = rand.nextInt(21);
@@ -96,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
 
         locationOfCorrectAnswer = rand.nextInt(4);
         answers.clear();
+        //this is a loop we will use for looping through our ArrayList answers. why - we want to come up with 4 numbers for our buttons - 3 random up to 40, and one of them
+        // has to be the correct answer. created locationOfCorrectAnswer to randomly select a number up to 4. if it happens to be the same as our for loop i (which would be
+        // the correct answer), then we add that to our answers array. if the answer does not equal the locationOfCorrectAnswer, we want to pick a random number from 1 to 41
+        // to fill up the other 3 buttons. we will save those to our answers array as well. we will then set the text of each of our buttons accordingly.
         for(int i = 0; i < 4; i++) {
             if(i == locationOfCorrectAnswer) {
                 answers.add(a+b);
@@ -107,12 +123,15 @@ public class MainActivity extends AppCompatActivity {
                 answers.add(wrongAnswer);
             }
         }
+        //here we are setting the random answers to the different buttons on our app.
         button0.setText(Integer.toString(answers.get(0)));
         button1.setText(Integer.toString(answers.get(1)));
         button2.setText(Integer.toString(answers.get(2)));
         button3.setText(Integer.toString(answers.get(3)));
     }
 
+    //initializing the items on our app. we don't want the game layout showing until they press the goButton
+    //so initially the gameLayout that contains all of our items is set to invisible.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
